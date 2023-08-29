@@ -4,7 +4,7 @@ OBJS	=	${SRCS:.cpp=.o}
 
 CXXFLAGS = -std=c++98 -Wall -Wextra -Werror # defalt bana cxxflags-@
 
-NAME	=	phonebook
+NAME	=	prog
 
 all: $(NAME)
 
