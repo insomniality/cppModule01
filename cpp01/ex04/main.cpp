@@ -1,37 +1,55 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 int main(int argc, char **argv)
 {
-	int	len;
-	
-	if (argc != 4)
+
+	std::stringstream a;
+
+	if (argc != 4 || std::strcmp(argv[2], argv[3]) == 0)
 	{
-		std::cout << "Err; Wrong number of arguments\n";
+		std::cout << "Err; Wrong input\n";
 		exit(1);
 	}
 
 	std::fstream nya;
-	nya.open(argv[1], std::ios::out | std::ios::in);
+
+	nya.open(argv[1]);
 	if (!nya.is_open())
 	{
 		std::cout << "Err; Could not open the file\n";
 		exit(1);
 	}
-	nya.close();
 
-	nya.open(argv[1], std::ios::binary | std::ios::ate); // why ios::binary
-	len = nya.tellg();
-	nya.close();
-	nya.open(argv[1], std::ios::out | std::ios::in);
+	a << nya.rdbuf();
+	std::string smt(a.str());
 
-	char pipe[len];
-	nya.get(pipe, len, EOF);
+	// std::cout << smt << "\n";
+
+	// nya.get(pipe, len, EOF);
+	// std::string smt = (std::string)pipe; // te ughaki pipe;
 	
-	std::string smt = (std::string)pipe; // te ughaki pipe;
-	while(smt.find(argv[2]) != std::string::npos)
-		smt[smt.find(argv[2])].swap(argv[3]);
+	while (smt.find(argv[2]) != std::string::npos) // && argv[2] != argv[3]
+	{
+		size_t found = smt.find(argv[2]);
 
-	// smt-@ lcvatsa popoxvats text-ov vor@ petqa nor file sarqel u mej@ dnel
+		smt.erase(found, std::string(argv[2]).length());
+		smt.insert(found, std::string(argv[3]));
+	}
+	nya.close();
 
+	// ----P1_end----
+	
+	std::fstream new_nya(std::string(argv[1]) + ".replace");
+
+	// const char *a = smt.c_str();
+
+	new_nya.open(std::string(argv[1]) + ".replace", std::fstream::out);
+
+	if (new_nya.fail())
+		perror("asdasdasd");
+
+	new_nya.write(smt.c_str(), smt.length());
+	new_nya.close();
 }
